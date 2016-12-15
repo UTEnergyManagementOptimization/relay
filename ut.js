@@ -108,7 +108,6 @@ function create_subscription() {
         priority: 10
     };
     g_subscription = new opcua.ClientSubscription(g_session, parameters);
-    debugger; 
 }
 
 
@@ -127,7 +126,6 @@ client.connect(endpointUrl, function () {
     client.createSession(userIdentity,function (err, session) {
         if (!err) {
             g_session = session;
-            debugger; 
             create_subscription();
             monitor_item("ns=2;s=BUMP1.UTCampus.ADH.CHW_DP");
             // populateTree();
@@ -163,7 +161,7 @@ function monitor_item(nodeId) {
             //, dataEncoding: { namespaceIndex: 0, name:null }
         },
         {
-            samplingInterval: 100,
+            samplingInterval: 1000,
             discardOldest: true,
             queueSize: 100
         }

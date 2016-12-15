@@ -108,7 +108,7 @@ function create_subscription() {
         priority: 10
     };
     g_subscription = new opcua.ClientSubscription(g_session, parameters);
-
+    debugger; 
 }
 
 
@@ -127,8 +127,10 @@ client.connect(endpointUrl, function () {
     client.createSession(userIdentity,function (err, session) {
         if (!err) {
             g_session = session;
+            debugger; 
             create_subscription();
-            populateTree();
+            monitor_item("ns=2;s=BUMP1.UTCampus.ADH.CHW_DP");
+            // populateTree();
         } else {
             console.log(" Cannot create session ", err.toString());
             process.exit(-1);
@@ -149,60 +151,63 @@ function disconnect() {
 
 var monitoredItemsListData = [];
 
-function monitor_item(treeItem) {
+function monitor_item(nodeId) {
 
-    var node = treeItem.node;
+    // var node = treeItem.node;
 
 
-    var monitoredItem = g_subscription.monitor({
-            nodeId: node.nodeId,
+    var monitoredItem = g_subscription.monitor(
+        {
+            nodeId: nodeId, // node.nodeId, 
             attributeId: opcua.AttributeIds.Value
             //, dataEncoding: { namespaceIndex: 0, name:null }
         },
         {
-            samplingInterval: 1000,
+            samplingInterval: 100,
             discardOldest: true,
             queueSize: 100
-        });
+        }
+    );
     // subscription.on("item_added",function(monitoredItem){
     //xx monitoredItem.on("initialized",function(){ });
     //xx monitoredItem.on("terminated",function(value){ });
 
 
-    node.monitoredItem = monitoredItem;
+    // node.monitoredItem = monitoredItem;
 
-    var browseName = treeItem.browseName || node.nodeId.toString();
-
-
-    var monitoredItemData = [node.browseName, node.nodeId.toString(), 'Q'];
-    monitoredItemsListData.push(monitoredItemData);
-    monitoredItemsList.setRows(monitoredItemsListData);
-    if (false) {
-        var series1 = {
-            title: browseName,
-            x: [],
-            y: []
-        };
-        line.setData(series1);
-    }
+    // var browseName = treeItem.browseName || node.nodeId.toString();
 
 
+    // var monitoredItemData = [node.browseName, node.nodeId.toString(), 'Q'];
+    // monitoredItemsListData.push(monitoredItemData);
+    // monitoredItemsList.setRows(monitoredItemsListData);
+    // if (false) {
+    //     var series1 = {
+    //         title: browseName,
+    //         x: [],
+    //         y: []
+    //     };
+    //     line.setData(series1);
+    // }
+
+    console.log('monitoredItem.on("changed", function (dataValue) {');
     monitoredItem.on("changed", function (dataValue) {
+        debugger; 
+        console.log(" dataValue: ", dataValue.value.toString().green);
+        // console.log(" value ", node.browseName, node.nodeId.toString(), " changed to ", dataValue.value.toString().green)
+        // if (dataValue.value.value.toFixed) {
+        //     node.valueAsString = w(dataValue.value.value.toFixed(3), 16);
+        // } else {
+        //     node.valueAsString = w(dataValue.value.value.toString(), 16);
+        // }
 
-        console.log(" value ", node.browseName, node.nodeId.toString(), " changed to ", dataValue.value.toString().green)
-        if (dataValue.value.value.toFixed) {
-            node.valueAsString = w(dataValue.value.value.toFixed(3), 16);
-        } else {
-            node.valueAsString = w(dataValue.value.value.toString(), 16);
-        }
-
-        //xx series1.title =  browseName+ " = " + dataValue.value.toString();
-        //xx series1.x.push(series1.x.length+1);
-        //xx series1.y.push(dataValue.value.value);
-        //xxsqline.setData(series1);
-        monitoredItemData[2] = node.valueAsString;
-        monitoredItemsList.setRows(monitoredItemsListData);
-        monitoredItemsList.render();
+        // //xx series1.title =  browseName+ " = " + dataValue.value.toString();
+        // //xx series1.x.push(series1.x.length+1);
+        // //xx series1.y.push(dataValue.value.value);
+        // //xxsqline.setData(series1);
+        // monitoredItemData[2] = node.valueAsString;
+        // monitoredItemsList.setRows(monitoredItemsListData);
+        // monitoredItemsList.render();
     });
 
 }
@@ -753,4 +758,4 @@ console.log("   endpoint url   = ".cyan, endpointUrl.toString());
 console.log("   securityMode   = ".cyan, securityMode.toString());
 console.log("   securityPolicy = ".cyan, securityPolicy.toString());
 
-console.log('foobar2');
+console.log('bottom of script');

@@ -57,6 +57,7 @@ function createSubscription() {
     g_subscription = new opcua.ClientSubscription(g_session, parameters);
     g_subscription.on("started", function(){
         console.log("subscription started");
+        console.log("  active: " + this.isActive());
     })
 }
 function sessionCreated(err, session) {

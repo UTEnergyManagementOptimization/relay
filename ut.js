@@ -19,7 +19,8 @@ var options = {
 var client = new opcua.OPCUAClient(options);
 var g_session = null;
 var g_subscription = null;
-function create_subscription() {
+var monitoredItems = [];
+function createSubscription() {
     assert(g_session);
     var parameters = {
         requestedPublishingInterval: 100,
@@ -31,11 +32,36 @@ function create_subscription() {
     };
     g_subscription = new opcua.ClientSubscription(g_session, parameters);
 }
+function monitorItem(nodeId) {
+    var monitoredItem = g_subscription.monitor(
+        {
+            nodeId: nodeId, // node.nodeId, 
+            attributeId: opcua.AttributeIds.Value
+            //, dataEncoding: { namespaceIndex: 0, name:null }
+        },
+        {
+            samplingInterval: 1000,
+            discardOldest: true,
+            queueSize: 100
+        }
+    );
+    monitoredItem.on("changed", function (dataValue) {
+        console.log(" dataValue: ", dataValue.value.toString().green);
+    });
+    monitoredItems.push(monitoredItem);
+}
+function unMonitorItem(){
+    var item = monitoredItems.pop();
+    item.terminate();
+};
 function sessionCreated(err, session) {
     if (!err) {
         g_session = session;
-        create_subscription();
-        monitor_item("ns=2;s=BUMP1.UTCampus.ADH.CHW_DP");
+        createSubscription();
+        monitorItem("ns=2;s=BUMP1.UTCampus.ADH.CHW_DP");
+        monitorItem("ns=2;s=BUMP1.UTCampus.ART.CHW_DP");
+        // setTimeout( function_reference, timeoutMillis );
+        // unMonitorItem();
     } else {
         console.log(" Cannot create session ", err.toString());
         process.exit(-1);
@@ -52,56 +78,8 @@ function disconnect() {
         });
     });
 }
-var monitoredItemsListData = [];
-function monitor_item(nodeId) {
-    var monitoredItem = g_subscription.monitor(
-        {
-            nodeId: nodeId, // node.nodeId, 
-            attributeId: opcua.AttributeIds.Value
-            //, dataEncoding: { namespaceIndex: 0, name:null }
-        },
-        {
-            samplingInterval: 1000,
-            discardOldest: true,
-            queueSize: 100
-        }
-    );
-    monitoredItem.on("changed", function (dataValue) {
-        console.log(" dataValue: ", dataValue.value.toString().green);
-    });
-}
-function unmonitor_item(treeItem) {
-    var node = treeItem.node;
-    var browseName = treeItem.browseName || node.nodeId.toString();
-
-    // teminate subscription
-    node.monitoredItem.terminate();
-  
-    var index = -1
-    monitoredItemsListData.forEach(function(entry, i) {
-      if (entry[1] == node.nodeId.toString()) {
-        index = i;
-      }
-    });
-    if (index > -1) {  
-      monitoredItemsListData.splice(index, 1);
-    }
-    
-    node.monitoredItem = null; 
-    
-    if (monitoredItemsListData.length > 0) {
-      monitoredItemsList.setRows(monitoredItemsListData);
-    } else {
-      var empty = [[" "]];
-      monitoredItemsList.setRows(empty);
-    }
-    
-    monitoredItemsList.render();
-     
-}
-console.log(" Welcome to Node-OPCUA CLI".red, "  Client".green);
-console.log("   endpoint url   = ".cyan, endpointUrl.toString());
-console.log("   securityMode   = ".cyan, securityMode.toString());
-console.log("   securityPolicy = ".cyan, securityPolicy.toString());
+console.log("endpoint url   = ".cyan, endpointUrl.toString());
+console.log("securityMode   = ".cyan, securityMode.toString());
+console.log("securityPolicy = ".cyan, securityPolicy.toString());
 
 console.log('bottom of script');

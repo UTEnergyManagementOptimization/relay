@@ -58,6 +58,8 @@ function createSubscription() {
     g_subscription.on("started", function(){
         console.log("subscription started");
         console.log("  active: " + this.isActive());
+        monitorItem("ns=2;s=BUMP1.UTCampus.ADH.CHW_DP");
+        monitorItem("ns=2;s=BUMP1.UTCampus.ART.CHW_DP");
     })
 }
 function sessionCreated(err, session) {
@@ -87,8 +89,6 @@ console.log("securityPolicy = ".cyan, securityPolicy.toString());
 console.log('bottom of script');
 // console.log('active!');
 // debugger; 
-// monitorItem("ns=2;s=BUMP1.UTCampus.ADH.CHW_DP");
-// monitorItem("ns=2;s=BUMP1.UTCampus.ART.CHW_DP");
 
 // var monitoredItem = monitoredItems[0];
 // setTimeout(unMonitorItem(), 5000);

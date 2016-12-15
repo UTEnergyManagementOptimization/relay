@@ -20,18 +20,6 @@ var client = new opcua.OPCUAClient(options);
 var g_session = null;
 var g_subscription = null;
 var monitoredItems = [];
-function createSubscription() {
-    assert(g_session);
-    var parameters = {
-        requestedPublishingInterval: 100,
-        requestedLifetimeCount: 1000,
-        requestedMaxKeepAliveCount: 12,
-        maxNotificationsPerPublish: 100,
-        publishingEnabled: true,
-        priority: 10
-    };
-    g_subscription = new opcua.ClientSubscription(g_session, parameters);
-}
 function monitorItem(nodeId) {
     var monitoredItem = g_subscription.monitor(
         {
@@ -49,19 +37,32 @@ function monitorItem(nodeId) {
         console.log(" dataValue: ", dataValue.value.toString().green);
     });
     monitoredItems.push(monitoredItem);
+    console.log('pushed ' + monitoredItem.itemToMonitor.nodeId.value);
 }
 function unMonitorItem(){
-    var item = monitoredItems.pop();
-    item.terminate();
+    var monitoredItem = monitoredItems.pop();
+    console.log('poped ' + monitoredItem.itemToMonitor.nodeId.value);
+    monitoredItem.terminate();
 };
+function createSubscription() {
+    assert(g_session);
+    var parameters = {
+        requestedPublishingInterval: 100,
+        requestedLifetimeCount: 1000,
+        requestedMaxKeepAliveCount: 12,
+        maxNotificationsPerPublish: 100,
+        publishingEnabled: true,
+        priority: 10
+    };
+    g_subscription = new opcua.ClientSubscription(g_session, parameters);
+    g_subscription.on("started", function(){
+        console.log("subscription started");
+    })
+}
 function sessionCreated(err, session) {
     if (!err) {
         g_session = session;
         createSubscription();
-        monitorItem("ns=2;s=BUMP1.UTCampus.ADH.CHW_DP");
-        monitorItem("ns=2;s=BUMP1.UTCampus.ART.CHW_DP");
-        // setTimeout( function_reference, timeoutMillis );
-        // unMonitorItem();
     } else {
         console.log(" Cannot create session ", err.toString());
         process.exit(-1);
@@ -83,3 +84,10 @@ console.log("securityMode   = ".cyan, securityMode.toString());
 console.log("securityPolicy = ".cyan, securityPolicy.toString());
 
 console.log('bottom of script');
+// console.log('active!');
+// debugger; 
+// monitorItem("ns=2;s=BUMP1.UTCampus.ADH.CHW_DP");
+// monitorItem("ns=2;s=BUMP1.UTCampus.ART.CHW_DP");
+
+// var monitoredItem = monitoredItems[0];
+// setTimeout(unMonitorItem(), 5000);

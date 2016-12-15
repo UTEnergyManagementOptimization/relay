@@ -2,18 +2,7 @@
 
 require("colors");
 var assert = require("assert");
-
-var contrib = require("blessed-contrib");
-
-var widget_tree = require("./widget_tree");
 var opcua = require("node-opcua");
-
-
-var NodeClass = require("node-opcua/lib/datamodel/nodeclass").NodeClass;
-opcua.NodeClass = NodeClass;
-// var attributeIdtoString = _.invert(opcua.AttributeIds);
-// var DataTypeIdsToString = _.invert(opcua.DataTypeIds);
-// var NodeClassToString = _.invert(opcua.NodeClass);
 var securityMode = opcua.MessageSecurityMode.get("NONE");
 if (!securityMode) {
     throw new Error("Invalid Security mode , should be " + opcua.MessageSecurityMode.enums.join(" "));

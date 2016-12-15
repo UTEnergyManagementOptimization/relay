@@ -33,15 +33,17 @@ function monitorItem(nodeId) {
             queueSize: 100
         }
     );
-    monitoredItem.on("changed", function (dataValue) {
-        console.log(" dataValue: ", dataValue.value.toString().green);
-        unMonitorItem();
-    });
+    monitoredItems.push(monitoredItem);
+    console.log('pushed ' + monitoredItem.itemToMonitor.nodeId.value);
     monitoredItem.on("initialized ", function (dataValue) {
         console.log("monitoredItem initialized: ");
     });
-    monitoredItems.push(monitoredItem);
-    console.log('pushed ' + monitoredItem.itemToMonitor.nodeId.value);
+    monitoredItem.on("err  ", function (dataValue) {
+        console.log("monitoredItem initialized: ");
+    });
+    monitoredItem.on("changed", function (dataValue) {
+        console.log(" changed: ", dataValue.value.toString().green);
+    });
 }
 function unMonitorItem(){
     var monitoredItem = monitoredItems.pop();

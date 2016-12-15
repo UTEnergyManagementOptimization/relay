@@ -31,18 +31,19 @@ function create_subscription() {
     };
     g_subscription = new opcua.ClientSubscription(g_session, parameters);
 }
-client.connect(endpointUrl, function () {
+function sessionCreated(err, session) {
+    if (!err) {
+        g_session = session;
+        create_subscription();
+        monitor_item("ns=2;s=BUMP1.UTCampus.ADH.CHW_DP");
+    } else {
+        console.log(" Cannot create session ", err.toString());
+        process.exit(-1);
+    }
+};
+client.connect(endpointUrl, function() {
     var userIdentity = null;
-    client.createSession(userIdentity,function (err, session) {
-        if (!err) {
-            g_session = session;
-            create_subscription();
-            monitor_item("ns=2;s=BUMP1.UTCampus.ADH.CHW_DP");
-        } else {
-            console.log(" Cannot create session ", err.toString());
-            process.exit(-1);
-        }
-    });
+    client.createSession(userIdentity, sessionCreated);
 });
 function disconnect() {
     g_session.close(function () {

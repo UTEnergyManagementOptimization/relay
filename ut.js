@@ -4,7 +4,7 @@ require("colors");
 var _ = require("underscore");
 var assert = require("assert");
 
-var blessed = require('blessed');
+// var blessed = require('blessed');
 var contrib = require("blessed-contrib");
 
 var widget_tree = require("./widget_tree");
@@ -324,29 +324,29 @@ TreeItem.prototype.__defineGetter__("name", function () {
 
 
 // Create a screen object.
-var screen = blessed.screen({
-    smartCSR: true,
-    autoPadding: false,
-    fullUnicode: true
-});
-screen.title = 'OPCUA CLI-Client';
+// var screen = blessed.screen({
+//     smartCSR: true,
+//     autoPadding: false,
+//     fullUnicode: true
+// });
+// screen.title = 'OPCUA CLI-Client';
 
 // create the main area
-var area1 = blessed.box({
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '90%-10',
-});
-screen.append(area1);
-var area2 = blessed.box({
-    top: '90%-9',
-    left: 0,
-    width: '100%',
-    height: 'shrink',
+// var area1 = blessed.box({
+//     top: 0,
+//     left: 0,
+//     width: '100%',
+//     height: '90%-10',
+// });
+// screen.append(area1);
+// var area2 = blessed.box({
+//     top: '90%-9',
+//     left: 0,
+//     width: '100%',
+//     height: 'shrink',
 
-});
-screen.append(area2);
+// });
+// screen.append(area2);
 
 var scrollbar = {
     ch: ' ',

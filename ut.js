@@ -16,88 +16,25 @@ opcua.NodeClass = NodeClass;
 var attributeIdtoString = _.invert(opcua.AttributeIds);
 var DataTypeIdsToString = _.invert(opcua.DataTypeIds);
 var NodeClassToString = _.invert(opcua.NodeClass);
-
-
-
-
-
-var argv = require('yargs')
-    .wrap(132)
-
-    .demand("endpoint")
-    .string("endpoint")
-    .describe("endpoint", "the end point to connect to ")
-
-    .string("securityMode")
-    .describe("securityMode", "the security mode")
-
-    .string("securityPolicy")
-    .describe("securityPolicy", "the policy mode")
-
-    .string("userName")
-    .describe("userName", "specify the user name of a UserNameIdentityToken ")
-
-    .string("password")
-    .describe("password", "specify the password of a UserNameIdentityToken")
-
-    .string("node")
-    .describe("node","the nodeId of the value to monitor")
-
-    .string("history")
-    .describe("history","make an historical read")
-
-    .alias('e', 'endpoint')
-    .alias('s', 'securityMode')
-    .alias('P', 'securityPolicy')
-    .alias("u", 'userName')
-    .alias("p", 'password')
-    .alias("n", 'node')
-    .alias("t", 'timeout')
-
-    .example("opcua-commander  --endpoint opc.tcp://localhost:49230 -P=Basic256 -s=SIGN")
-    .example("opcua-commander  -e opc.tcp://localhost:49230 -P=Basic256 -s=SIGN -u JoeDoe -p P@338@rd ")
-    .example("opcua-commander  --endpoint opc.tcp://localhost:49230  -n=\"ns=0;i=2258\"")
-
-    .argv;
-
-
-var securityMode = opcua.MessageSecurityMode.get(argv.securityMode || "NONE");
+var securityMode = opcua.MessageSecurityMode.get("NONE");
 if (!securityMode) {
     throw new Error("Invalid Security mode , should be " + opcua.MessageSecurityMode.enums.join(" "));
 }
 
-var securityPolicy = opcua.SecurityPolicy.get(argv.securityPolicy || "None");
+var securityPolicy = opcua.SecurityPolicy.get("None");
 if (!securityPolicy) {
     throw new Error("Invalid securityPolicy , should be " + opcua.SecurityPolicy.enums.join(" "));
 }
-
-var monitored_node = argv.node || "ns=1;s=PumpSpeed";
-
-
-var endpointUrl = argv.endpoint || "opc.tcp://localhost:26543";
-
-if (!endpointUrl) {
-    require('yargs').showHelp();
-    return;
-}
-
-
+var endpointUrl = "opc.tcp://128.83.159.107:49320";
 var options = {
     securityMode: securityMode,
     securityPolicy: securityPolicy,
-    //xx serverCertificate: serverCertificate,
     defaultSecureTokenLifetime: 40000
 };
 var client = new opcua.OPCUAClient(options);
-
 var g_session = null;
-
-var populateTree = function () {
-};
-
 var g_subscription = null;
 function create_subscription() {
-
     assert(g_session);
     var parameters = {
         requestedPublishingInterval: 100,
@@ -109,32 +46,17 @@ function create_subscription() {
     };
     g_subscription = new opcua.ClientSubscription(g_session, parameters);
 }
-
-
 client.connect(endpointUrl, function () {
-
-    var userIdentity = null; // anonymous
-    if (argv.userName && argv.password) {
-
-        userIdentity = {
-            userName: argv.userName,
-            password: argv.password
-        };
-
-    }
-
+    var userIdentity = null;
     client.createSession(userIdentity,function (err, session) {
         if (!err) {
             g_session = session;
             create_subscription();
             monitor_item("ns=2;s=BUMP1.UTCampus.ADH.CHW_DP");
-            // populateTree();
         } else {
             console.log(" Cannot create session ", err.toString());
             process.exit(-1);
         }
-
-        //xx callback(err);
     });
 });
 
@@ -150,10 +72,6 @@ function disconnect() {
 var monitoredItemsListData = [];
 
 function monitor_item(nodeId) {
-
-    // var node = treeItem.node;
-
-
     var monitoredItem = g_subscription.monitor(
         {
             nodeId: nodeId, // node.nodeId, 
@@ -166,46 +84,8 @@ function monitor_item(nodeId) {
             queueSize: 100
         }
     );
-    // subscription.on("item_added",function(monitoredItem){
-    //xx monitoredItem.on("initialized",function(){ });
-    //xx monitoredItem.on("terminated",function(value){ });
-
-
-    // node.monitoredItem = monitoredItem;
-
-    // var browseName = treeItem.browseName || node.nodeId.toString();
-
-
-    // var monitoredItemData = [node.browseName, node.nodeId.toString(), 'Q'];
-    // monitoredItemsListData.push(monitoredItemData);
-    // monitoredItemsList.setRows(monitoredItemsListData);
-    // if (false) {
-    //     var series1 = {
-    //         title: browseName,
-    //         x: [],
-    //         y: []
-    //     };
-    //     line.setData(series1);
-    // }
-
-    console.log('monitoredItem.on("changed", function (dataValue) {');
     monitoredItem.on("changed", function (dataValue) {
-        debugger; 
         console.log(" dataValue: ", dataValue.value.toString().green);
-        // console.log(" value ", node.browseName, node.nodeId.toString(), " changed to ", dataValue.value.toString().green)
-        // if (dataValue.value.value.toFixed) {
-        //     node.valueAsString = w(dataValue.value.value.toFixed(3), 16);
-        // } else {
-        //     node.valueAsString = w(dataValue.value.value.toString(), 16);
-        // }
-
-        // //xx series1.title =  browseName+ " = " + dataValue.value.toString();
-        // //xx series1.x.push(series1.x.length+1);
-        // //xx series1.y.push(dataValue.value.value);
-        // //xxsqline.setData(series1);
-        // monitoredItemData[2] = node.valueAsString;
-        // monitoredItemsList.setRows(monitoredItemsListData);
-        // monitoredItemsList.render();
     });
 
 }

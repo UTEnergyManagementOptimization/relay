@@ -35,14 +35,19 @@ function monitorItem(nodeId) {
     );
     monitoredItem.on("changed", function (dataValue) {
         console.log(" dataValue: ", dataValue.value.toString().green);
+        unMonitorItem();
+    });
+    monitoredItem.on("initialized ", function (dataValue) {
+        console.log("monitoredItem initialized: ");
     });
     monitoredItems.push(monitoredItem);
     console.log('pushed ' + monitoredItem.itemToMonitor.nodeId.value);
 }
 function unMonitorItem(){
     var monitoredItem = monitoredItems.pop();
-    console.log('poped ' + monitoredItem.itemToMonitor.nodeId.value);
+    console.log('popped ' + monitoredItem.itemToMonitor.nodeId.value);
     monitoredItem.terminate();
+    console.log('terminated ');
 };
 function createSubscription() {
     assert(g_session);

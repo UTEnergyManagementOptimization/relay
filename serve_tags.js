@@ -216,7 +216,6 @@ function monitorItem(nodeId) {
         }
     );
     monitoredItems.push(monitoredItem);
-    console.log('pushed ' + monitoredItem.itemToMonitor.nodeId.value);
     monitoredItem.on("initialized ", function (dataValue) {
         console.log("monitoredItem initialized: ");
     });
@@ -252,13 +251,10 @@ function createSubscription() {
     };
     g_subscription = new opcua.ClientSubscription(g_session, parameters);
     g_subscription.on("started", function(){
-        console.log("subscription started");
-        console.log("  active: " + this.isActive());
         var nodeIdPrefix = 'ns=2;s=BUMP1.UTCampus.';
         var nodeIdSuffix = '.CHW_DP';
         Object.keys(buildings).forEach(function(building) {
           var nodeId = nodeIdPrefix + building.toUpperCase() + nodeIdSuffix;
-          console.log('monitorItem: ' + nodeId); 
           monitorItem(nodeId);
         });
     })
@@ -286,14 +282,11 @@ function disconnect() {
 console.log("endpoint url   = ".cyan, endpointUrl.toString());
 console.log("securityMode   = ".cyan, securityMode.toString());
 console.log("securityPolicy = ".cyan, securityPolicy.toString());
-
-console.log('bottom of script');
-
 var express = require('express')
 var port = 3700;
 var app = express();
 app.get("/", function(req, res){
-    res.send("It works! Now index.html.");
+    res.send("It works! Now try index.html.");
 });
 app.use(express.static(__dirname + '/'));
 var io = require('socket.io').listen(app.listen(port));

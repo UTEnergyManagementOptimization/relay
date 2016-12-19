@@ -22,6 +22,9 @@ var options = {
 };
 
 var client = new opcua.OPCUAClient(options);
+var g_session = null;
+var g_subscription = null;
+var monitoredItems = [];
 
 var hostname = require("os").hostname();
 hostname = hostname.toLowerCase();

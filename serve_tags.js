@@ -1,13 +1,27 @@
+"use strict";
+require("colors");
+var assert = require("assert");
 var express = require("express");
 var port = 3700;
 
 var opcua = require("node-opcua");
 var async = require("async");
 var color = require("colors");
+var securityMode = opcua.MessageSecurityMode.get("NONE");
+if (!securityMode) {
+    throw new Error("Invalid Security mode , should be " + opcua.MessageSecurityMode.enums.join(" "));
+}
+var securityPolicy = opcua.SecurityPolicy.get("None");
+if (!securityPolicy) {
+    throw new Error("Invalid securityPolicy , should be " + opcua.SecurityPolicy.enums.join(" "));
+}
+var options = {
+    securityMode: securityMode,
+    securityPolicy: securityPolicy,
+    defaultSecureTokenLifetime: 40000
+};
 
-var client = new opcua.OPCUAClient({
-
-});
+var client = new opcua.OPCUAClient(options);
 
 var hostname = require("os").hostname();
 hostname = hostname.toLowerCase();

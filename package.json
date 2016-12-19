@@ -31,6 +31,8 @@
     "url": "https://github.com/node-opcua/opcua-commander/issues"
   },
   "dependencies": {
+    "express": "~4.13.4",
+    "socket.io": "~1.4.5",
     "async": "^2.1.4",
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.5.5",

@@ -94,8 +94,12 @@ console.log("securityMode   = ".cyan, securityMode.toString());
 console.log("securityPolicy = ".cyan, securityPolicy.toString());
 
 console.log('bottom of script');
-// console.log('active!');
-// debugger; 
 
-// var monitoredItem = monitoredItems[0];
-// setTimeout(unMonitorItem(), 5000);
+var express = require('express')
+var port = 3700;
+var app = express();
+app.get("/", function(req, res){
+    res.send("It works! Now index.html.");
+});
+app.use(express.static(__dirname + '/'));
+app.listen(port);

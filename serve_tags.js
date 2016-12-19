@@ -42,6 +42,7 @@ function monitorItem(nodeId) {
         console.log("monitoredItem initialized: ");
     });
     monitoredItem.on("changed", function (dataValue) {
+        debugger; 
         console.log(" changed: ", dataValue.value.toString().green);
         io.sockets.emit('message', {
             value: dataValue.value.value,

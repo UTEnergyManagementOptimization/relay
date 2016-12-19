@@ -20,16 +20,10 @@ var client = new opcua.OPCUAClient(options);
 var g_session = null;
 var g_subscription = null;
 var monitoredItems = [];
-
-var express = require("express");
-var app = express();
-var port = 3700;
-var io = require('socket.io').listen(app.listen(port));
-
 function monitorItem(nodeId) {
     var monitoredItem = g_subscription.monitor(
         {
-            nodeId: nodeId, 
+            nodeId: nodeId, // node.nodeId, 
             attributeId: opcua.AttributeIds.Value
             //, dataEncoding: { namespaceIndex: 0, name:null }
         },
@@ -49,12 +43,6 @@ function monitorItem(nodeId) {
     });
     monitoredItem.on("changed", function (dataValue) {
         console.log(" changed: ", dataValue.value.toString().green);
-        io.sockets.emit('message', {
-            value: dataValue.value.value,
-            timestamp: dataValue.serverTimestamp,
-            nodeId: nodeId, 
-            browseName: "DP"
-        });
     });
 }
 function unMonitorItem(){
@@ -111,46 +99,3 @@ console.log('bottom of script');
 
 // var monitoredItem = monitoredItems[0];
 // setTimeout(unMonitorItem(), 5000);
-
-function startHTTPServer() {
-    var app = express();
-    app.get("/", function(req, res){
-        res.send("It works! Now index.html.");
-    });
-    app.use(express.static(__dirname + '/'));
-    var io = require('socket.io').listen(app.listen(port));
-    io.sockets.on('connection', function (socket) {
-//        socket.on('send', function (data) {
-//            io.sockets.emit('message', data);
-//        });
-    });
-    var monitoredItem = the_subscription.monitor(
-        {
-            nodeId: nodeIdToMonitor,
-            attributeId: 13
-        },
-        {
-            samplingInterval: 100,
-            discardOldest: true,
-            queueSize: 100
-        },
-        opcua.read_service.TimestampsToReturn.Both,function(err) {
-            if (err) {
-                console.log("Monitor  "+ nodeIdToMonitor.toString() +  " failed");
-                console.log("ERr = ",err.message);
-            }
-
-        }
-    );
-    monitoredItem.on("changed", function(dataValue){
-        console.log("changed: " +  dataValue.toString());
-        io.sockets.emit('message', {
-            value: dataValue.value.value,
-            timestamp: dataValue.serverTimestamp,
-            nodeId: nodeIdToMonitor.toString(),
-            browseName: "DP"
-        });
-    });
-}
-startHTTPServer();
-console.log("Listening on port " + port);

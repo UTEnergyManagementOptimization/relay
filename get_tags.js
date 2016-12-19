@@ -43,6 +43,12 @@ function monitorItem(nodeId) {
     });
     monitoredItem.on("changed", function (dataValue) {
         console.log(" changed: ", dataValue.value.toString().green);
+        io.sockets.emit('message', {
+            value: dataValue.value.value,
+            timestamp: dataValue.serverTimestamp,
+            nodeId: nodeId,
+            browseName: "DP"
+        });
     });
 }
 function unMonitorItem(){
@@ -102,4 +108,4 @@ app.get("/", function(req, res){
     res.send("It works! Now index.html.");
 });
 app.use(express.static(__dirname + '/'));
-app.listen(port);
+var io = require('socket.io').listen(app.listen(port));

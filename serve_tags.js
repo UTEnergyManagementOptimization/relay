@@ -228,8 +228,7 @@ function monitorItem(nodeId) {
         io.sockets.emit('message', {
             value: dataValue.value.value,
             timestamp: dataValue.serverTimestamp,
-            nodeId: nodeId,
-            browseName: "DP"
+            nodeId: nodeId
         });
     });
 }
@@ -252,11 +251,17 @@ function createSubscription() {
     g_subscription = new opcua.ClientSubscription(g_session, parameters);
     g_subscription.on("started", function(){
         var nodeIdPrefix = 'ns=2;s=BUMP1.UTCampus.';
-        var nodeIdSuffix = '.CHW_DP';
+        var nodeIdSuffixCHW_DP = '.CHW_DP';
+        var nodeIdSuffixE_TBU_DMD = '.E_TBU_DMD';
         Object.keys(buildings).forEach(function(building) {
-          var nodeId = nodeIdPrefix + building.toUpperCase() + nodeIdSuffix;
-          monitorItem(nodeId);
+          var nodeIdCHW_DP = nodeIdPrefix + building.toUpperCase() + nodeIdSuffixCHW_DP;
+          var nodeIdE_TBU_DMD = nodeIdPrefix + building.toUpperCase() + nodeIdSuffixE_TBU_DMD;
+          monitorItem(nodeIdCHW_DP);
+          monitorItem(nodeIdE_TBU_DMD);
         });
+    })
+    g_subscription.on("ClientSubscription::item_added", function(){
+        console.log('item_added');
     })
 }
 function sessionCreated(err, session) {

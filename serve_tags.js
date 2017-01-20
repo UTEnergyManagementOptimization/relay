@@ -251,21 +251,17 @@ function createSubscription() {
     };
     g_subscription = new opcua.ClientSubscription(g_session, parameters);
     g_subscription.on("started", function(){
-        var nodeIdPrefix = 'ns=2;s=BUMP1.UTCampus.';
-        var nodeIdSuffixCHW_DP = '.CHW_DP';
-        var nodeIdSuffixE_TBU_DMD = '.E_TBU_DMD';
-        // Object.keys(buildings).forEach(function(building) {
-        //   var nodeIdCHW_DP = nodeIdPrefix + building.toUpperCase() + nodeIdSuffixCHW_DP;
-        //   var nodeIdE_TBU_DMD = nodeIdPrefix + building.toUpperCase() + nodeIdSuffixE_TBU_DMD;
-        //   monitorItem(nodeIdCHW_DP);
-        //   monitorItem(nodeIdE_TBU_DMD);
-        // });
-        debugger; 
-        var nodeAddress; 
-        nodeAddress = 'ns=2;s=[default]UTCampus/ADH/CHW_AlarmState';
-        monitorItem(nodeAddress);
-        nodeAddress = 'ns=2;s=[default]UTCampus/ADH/CHW_DP';
-        monitorItem(nodeAddress);
+        Object.keys(buildings).forEach(function(building) {
+            var nodeAddress; 
+            nodeAddress = 'ns=2;s=[default]UTCampus/' + building + '/CHW_DP_AlarmState';
+            monitorItem(nodeAddress);
+            nodeAddress = 'ns=2;s=[default]UTCampus/' + building + '/CHW_DP';
+            monitorItem(nodeAddress);
+            nodeAddress = 'ns=2;s=[default]UTCampus/' + building + '/E_TBU_DMD_AlarmState';
+            monitorItem(nodeAddress);
+            nodeAddress = 'ns=2;s=[default]UTCampus/' + building + '/E_TBU_DMD';
+            monitorItem(nodeAddress);
+        });
     })
     g_subscription.on("ClientSubscription::item_added", function(){
         console.log('item_added');

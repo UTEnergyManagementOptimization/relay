@@ -10,7 +10,9 @@ var securityPolicy = opcua.SecurityPolicy.get("None");
 if (!securityPolicy) {
     throw new Error("Invalid securityPolicy , should be " + opcua.SecurityPolicy.enums.join(" "));
 }
-var endpointUrl = "opc.tcp://128.83.159.107:49320";
+// var endpointUrl = "opc.tcp://128.83.159.107:49320"; // Kepware
+var endpointUrl = "opc.tcp://127.0.0.1:4096"; // IA
+
 var options = {
     securityMode: securityMode,
     securityPolicy: securityPolicy,
@@ -223,7 +225,6 @@ function monitorItem(nodeId) {
         console.log("monitoredItem initialized: ");
     });
     monitoredItem.on("changed", function (dataValue) {
-        debugger; 
         console.log(nodeId + ' ' + dataValue.value.value.toString().green);
         io.sockets.emit('message', {
             value: dataValue.value.value,
@@ -253,12 +254,18 @@ function createSubscription() {
         var nodeIdPrefix = 'ns=2;s=BUMP1.UTCampus.';
         var nodeIdSuffixCHW_DP = '.CHW_DP';
         var nodeIdSuffixE_TBU_DMD = '.E_TBU_DMD';
-        Object.keys(buildings).forEach(function(building) {
-          var nodeIdCHW_DP = nodeIdPrefix + building.toUpperCase() + nodeIdSuffixCHW_DP;
-          var nodeIdE_TBU_DMD = nodeIdPrefix + building.toUpperCase() + nodeIdSuffixE_TBU_DMD;
-          monitorItem(nodeIdCHW_DP);
-          monitorItem(nodeIdE_TBU_DMD);
-        });
+        // Object.keys(buildings).forEach(function(building) {
+        //   var nodeIdCHW_DP = nodeIdPrefix + building.toUpperCase() + nodeIdSuffixCHW_DP;
+        //   var nodeIdE_TBU_DMD = nodeIdPrefix + building.toUpperCase() + nodeIdSuffixE_TBU_DMD;
+        //   monitorItem(nodeIdCHW_DP);
+        //   monitorItem(nodeIdE_TBU_DMD);
+        // });
+        debugger; 
+        var nodeAddress; 
+        nodeAddress = 'ns=2;s=[default]UTCampus/ADH/CHW_AlarmState';
+        monitorItem(nodeAddress);
+        nodeAddress = 'ns=2;s=[default]UTCampus/ADH/CHW_DP';
+        monitorItem(nodeAddress);
     })
     g_subscription.on("ClientSubscription::item_added", function(){
         console.log('item_added');

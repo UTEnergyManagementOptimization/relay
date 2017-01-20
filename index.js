@@ -110,8 +110,6 @@ function create_subscription() {
     g_subscription = new opcua.ClientSubscription(g_session, parameters);
 
 }
-
-
 client.connect(endpointUrl, function () {
 
     var userIdentity = null; // anonymous
@@ -737,7 +735,7 @@ function install_logWindow() {
     });
 }
 
-
+debugger; 
 install_address_space_explorer();
 //xx install_graphWindow();
 install_attributeList();

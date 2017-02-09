@@ -11,6 +11,9 @@ if (!securityPolicy) {
     throw new Error("Invalid securityPolicy , should be " + opcua.SecurityPolicy.enums.join(" "));
 }
 // var endpointUrl = "opc.tcp://128.83.159.107:49320"; // Kepware
+// var endpointUrl = "opc.tcp://127.0.0.1:4096"; // IA
+
+// var endpointUrl = "opc.tcp://169.254.198.87:49320"; // Kepware
 var endpointUrl = "opc.tcp://127.0.0.1:4096"; // IA
 
 var options = {
@@ -253,13 +256,13 @@ function createSubscription() {
     g_subscription.on("started", function(){
         Object.keys(buildings).forEach(function(building) {
             var nodeAddress; 
-            nodeAddress = 'ns=2;s=[default]UTCampus/' + building + '/CHW_DP_AlarmState';
-            monitorItem(nodeAddress);
             nodeAddress = 'ns=2;s=[default]UTCampus/' + building + '/CHW_DP';
             monitorItem(nodeAddress);
-            nodeAddress = 'ns=2;s=[default]UTCampus/' + building + '/E_TBU_DMD_AlarmState';
-            monitorItem(nodeAddress);
             nodeAddress = 'ns=2;s=[default]UTCampus/' + building + '/E_TBU_DMD';
+            monitorItem(nodeAddress);
+            nodeAddress = 'ns=2;s=[default]UTCampus/' + building + '/CHW_DP_Alarm';
+            monitorItem(nodeAddress);
+            nodeAddress = 'ns=2;s=[default]UTCampus/' + building + '/E_TBU_DMD_Alarm';
             monitorItem(nodeAddress);
         });
     })
